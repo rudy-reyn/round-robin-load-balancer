@@ -13,8 +13,7 @@ runLoadBalancer' servers s = do
     msg <- recv s 1024
     unless (C.null msg) $ do
         forwardMsg nextPort msg >>= C.putStr
-        rec <- forward msg
-        sendAll s rec
+        forward msg >>= sendAll s
         runLoadBalancer' nextRound s
     where ((nextIP, nextPort), nextRound) = roundRobin servers
           forward = forwardMessage nextIP nextPort
